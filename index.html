@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ਸਕੂਲ ਗੈਰ-ਹਾਜ਼ਰ SMS ਅਤੇ ਹਾਜ਼ਰੀ ਰਿਕਾਰਡ</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; color: #333; }
+  h2 { text-align: center; color: #1a365d; margin-bottom: 5px; }
+  p.subtitle { text-align: center; color: #666; font-size: 14px; margin-top: 0; margin-bottom: 15px; }
+  .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 15px; }
+  .card h3 { margin-top: 0; font-size: 16px; color: #2d3748; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .flex-inputs { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
+  .flex-inputs input { flex: 1; min-width: 140px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 15px; }
+  textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
+  button { cursor: pointer; border-radius: 6px; font-size: 14px; font-weight: bold; border: none; padding: 10px 16px; }
+  .btn-primary { background-color: #2b6cb0; color: white; }
+  .btn-save { background-color: #319795; color: white; margin-top: 8px; }
+  .btn-clear { background-color: #e53e3e; color: white; font-size: 12px; padding: 6px 10px; }
+  .btn-export { background-color: #2f855a; color: white; font-size: 12px; padding: 6px 10px; }
+  .filter-bar { background-color: #edf2f7; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .filter-bar label { font-weight: bold; font-size: 13px; color: #2d3748; }
+  .filter-bar input[type="date"] { padding: 6px 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; }
+  .btn-filter-reset { background-color: #718096; color: white; font-size: 12px; padding: 6px 10px; }
+  table { width: 100%; border-collapse: collapse; background: white; }
+  th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+  th { background-color: #2d3748; color: white; font-size: 14px; }
+  tr:hover { background-color: #f7fafc; }
+  .btn-sms { display: inline-block; background-color: #0d6efd; color: white !important; text-decoration: none; padding: 7px 12px; border-radius: 5px; font-size: 13px; font-weight: bold; }
+  .btn-wa { display: inline-block; background-color: #25d366; color: white !important; text-decoration: none; padding: 7px 12px; border-radius: 5px; font-size: 13px; font-weight: bold; margin-left: 5px; }
+  .del-btn { background: none; border: none; color: #e53e3e; font-size: 18px; }
+  .checkbox-col { text-align: center; width: 60px; }
+  input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+  .hint { font-size: 12px; color: #718096; margin-top: 4px; }
+  .badge-sent { background-color: #c6f6d5; color: #22543d; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+  .summary-count { font-size: 13px; color: #2b6cb0; font-weight: bold; margin-left: auto; }
+</style>
+</head>
+<body>
+
+<h2>ਸਕੂਲ ਗੈਰ-ਹਾਜ਼ਰ SMS ਅਤੇ ਹਾਜ਼ਰੀ ਰਿਕਾਰਡ</h2>
+<p class="subtitle">ਗੈਰ-ਹਾਜ਼ਰੀ ਮਾਰਕ ਕਰੋ, SMS ਭੇਜੋ ਅਤੇ ਮਿਤੀ ਅਨੁਸਾਰ ਰਿਕਾਰਡ ਦੇਖੋ</p>
+
+<div class="card" style="border-left: 4px solid #319795;">
+  <h3>✏️ ਮੈਸੇਜ ਟੈਂਪਲੇਟ:</h3>
+  <textarea id="msgTemplate" rows="2"></textarea>
+  <div class="hint">ਜਿੱਥੇ ਬੱਚੇ ਦਾ ਨਾਮ ਲਿਆਉਣਾ ਹੈ, ਉੱਥੇ <b>{ਨਾਮ}</b> ਰੱਖੋ।</div>
+  <button class="btn-save" onclick="saveTemplate()">ਟੈਂਪਲੇਟ ਸੇਵ ਕਰੋ 💾</button>
+</div>
+
+<div class="card">
+  <h3>➕ ਨਵਾਂ ਵਿਦਿਆਰਥੀ ਜੋੜੋ:</h3>
+  <div class="flex-inputs">
+    <input type="text" id="stuName" placeholder="ਵਿਦਿਆਰਥੀ ਦਾ ਨਾਮ">
+    <input type="tel" id="stuPhone" placeholder="ਮੋਬਾਈਲ ਨੰਬਰ (10 ਅੰਕ)">
+    <button class="btn-primary" onclick="addStudent()">ਜੋੜੋ +</button>
+  </div>
+</div>
+
+<div class="card" style="overflow-x: auto; padding: 0;">
+  <table>
+    <thead>
+      <tr>
+        <th class="checkbox-col">ਗੈਰ-ਹਾਜ਼ਰ</th>
+        <th>ਵਿਦਿਆਰਥੀ ਦਾ ਨਾਮ</th>
+        <th>ਮੋਬਾਈਲ ਨੰਬਰ</th>
+        <th>ਮੈਸੇਜ ਭੇਜੋ</th>
+        <th style="width: 40px;"></th>
+      </tr>
+    </thead>
+    <tbody id="studentTableBody"></tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>
+    <span>📋 ਗੈਰ-ਹਾਜ਼ਰੀ ਅਤੇ ਮੈਸੇਜ ਰਿਕਾਰਡ</span>
+    <div>
+      <button class="btn-export" onclick="exportToCSV()">ਐਕਸਲ ਡਾਊਨਲੋਡ 📥</button>
+      <button class="btn-clear" onclick="clearLogs()">ਰਿਕਾਰਡ ਸਾਫ਼ ਕਰੋ 🗑️</button>
+    </div>
+  </h3>
+
+  <div class="filter-bar">
+    <label for="filterDate">📅 ਮਿਤੀ ਚੁਣੋ:</label>
+    <input type="date" id="filterDate" onchange="applyDateFilter()">
+    <button class="btn-filter-reset" onclick="resetDateFilter()">ਸਾਰੀਆਂ ਮਿਤੀਆਂ ਦਿਖਾਓ</button>
+    <span class="summary-count" id="recordCountText">ਕੁੱਲ ਰਿਕਾਰਡ: 0</span>
+  </div>
+
+  <div style="overflow-x: auto; max-height: 280px;">
+    <table>
+      <thead>
+        <tr>
+          <th>ਮਿਤੀ ਅਤੇ ਸਮਾਂ</th>
+          <th>ਵਿਦਿਆਰਥੀ ਦਾ ਨਾਮ</th>
+          <th>ਮੋਬਾਈਲ ਨੰਬਰ</th>
+          <th>ਮਾਧਿਅਮ</th>
+        </tr>
+      </thead>
+      <tbody id="logTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const defaultTemplate = "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ਜੀ, ਆਪ ਜੀ ਦਾ ਬੱਚਾ {ਨਾਮ} ਅੱਜ ਸਕੂਲ ਵਿੱਚੋਂ ਗੈਰ-ਹਾਜ਼ਰ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਕਾਰਨ ਦੱਸੋ। - ਸਕੂਲ";
+  let currentTemplate = localStorage.getItem("sms_template") || defaultTemplate;
+  document.getElementById("msgTemplate").value = currentTemplate;
+
+  let defaultStudents = [
+    { name: "ਹਰਦੀਪ ਸਿੰਘ", phone: "9815032630", absent: true },
+    { name: "ਸਿਮਰਨਜੀਤ ਕੌਰ", phone: "9876543210", absent: false },
+    { name: "ਗੁਰਪ੍ਰੀਤ ਸਿੰਘ", phone: "9876501234", absent: false }
+  ];
+
+  let students = JSON.parse(localStorage.getItem("school_students")) || defaultStudents;
+  let logs = JSON.parse(localStorage.getItem("attendance_logs")) || [];
+  let selectedFilterDate = "";
+
+  function saveTemplate() {
+    const val = document.getElementById("msgTemplate").value.trim();
+    if (!val) return;
+    currentTemplate = val;
+    localStorage.setItem("sms_template", currentTemplate);
+    alert("ਮੈਸੇਜ ਟੈਂਪਲੇਟ ਸੇਵ ਹੋ ਗਿਆ!");
+    renderTable();
+  }
+
+  function saveStudents() {
+    localStorage.setItem("school_students", JSON.stringify(students));
+    renderTable();
+  }
+
+  function addStudent() {
+    const name = document.getElementById("stuName").value.trim();
+    const phone = document.getElementById("stuPhone").value.trim();
+    if (!name || !phone) {
+      alert("ਕਿਰਪਾ ਕਰਕੇ ਨਾਮ ਅਤੇ ਨੰਬਰ ਦੋਵੇਂ ਭਰੋ।");
+      return;
+    }
+    students.push({ name: name, phone: phone, absent: false });
+    document.getElementById("stuName").value = "";
+    document.getElementById("stuPhone").value = "";
+    saveStudents();
+  }
+
+  function deleteStudent(index) {
+    if (confirm("ਕੀ ਤੁਸੀਂ ਇਸ ਵਿਦਿਆਰਥੀ ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?")) {
+      students.splice(index, 1);
+      saveStudents();
+    }
+  }
+
+  function toggleAbsent(index) {
+    students[index].absent = !students[index].absent;
+    saveStudents();
+  }
+
+  function recordMessage(name, phone, medium) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const isoDate = `${year}-${month}-${day}`;
+    const displayDate = `${day}/${month}/${year}`;
+    const timeStr = now.toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' });
+
+    logs.unshift({
+      isoDate: isoDate,
+      displayDate: `${displayDate} ${timeStr}`,
+      name: name,
+      phone: phone,
+      medium: medium
+    });
+
+    localStorage.setItem("attendance_logs", JSON.stringify(logs));
+    renderLogs();
+  }
+
+  function clearLogs() {
+    if (confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਪੁਰਾਣਾ ਹਾਜ਼ਰੀ ਰਿਕਾਰਡ ਸਾਫ਼ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?")) {
+      logs = [];
+      localStorage.setItem("attendance_logs", JSON.stringify(logs));
+      renderLogs();
+    }
+  }
+
+  function applyDateFilter() {
+    selectedFilterDate = document.getElementById("filterDate").value;
+    renderLogs();
+  }
+
+  function resetDateFilter() {
+    selectedFilterDate = "";
+    document.getElementById("filterDate").value = "";
+    renderLogs();
+  }
+
+  function getFilteredLogs() {
+    if (!selectedFilterDate) return logs;
+    return logs.filter(log => log.isoDate === selectedFilterDate);
+  }
+
+  function exportToCSV() {
+    const listToExport = getFilteredLogs();
+    if (listToExport.length === 0) {
+      alert("ਡਾਊਨਲੋਡ ਕਰਨ ਲਈ ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ ਹੈ।");
+      return;
+    }
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+    csvContent += "Date & Time,Student Name,Mobile Number,Medium\n";
+    listToExport.forEach(log => {
+      const dt = log.displayDate || log.date;
+      csvContent += `"${dt}","${log.name}","${log.phone}","${log.medium}"\n`;
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    const dateTag = selectedFilterDate ? selectedFilterDate : "All_Dates";
+    link.setAttribute("download", `School_Absent_Record_${dateTag}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function renderLogs() {
+    const tbody = document.getElementById("logTableBody");
+    tbody.innerHTML = "";
+    const filtered = getFilteredLogs();
+
+    document.getElementById("recordCountText").innerText = `ਕੁੱਲ ਰਿਕਾਰਡ: ${filtered.length}`;
+
+    if (filtered.length === 0) {
+      const msg = selectedFilterDate ? "ਇਸ ਮਿਤੀ ਦਾ ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ ਮਿਲਿਆ।" : "ਕੋਈ ਰਿਕਾਰਡ ਮੌਜੂਦ ਨਹੀਂ ਹੈ।";
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#a0aec0; padding:15px;">${msg}</td></tr>`;
+      return;
+    }
+
+    filtered.forEach(item => {
+      const tr = document.createElement("tr");
+      const dt = item.displayDate || item.date;
+      tr.innerHTML = `
+        <td style="font-size:13px; color:#4a5568;">${dt}</td>
+        <td><strong>${item.name}</strong></td>
+        <td>${item.phone}</td>
+        <td><span class="badge-sent">${item.medium}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById("studentTableBody");
+    tbody.innerHTML = "";
+
+    students.forEach((stu, idx) => {
+      const tr = document.createElement("tr");
+      let messageText = currentTemplate.replace(/{ਨਾਮ}/g, stu.name).replace(/{name}/gi, stu.name);
+      const encodedMsg = encodeURIComponent(messageText);
+      const smsLink = `sms:${stu.phone}?body=${encodedMsg}`;
+      const waLink = `https://wa.me/91${stu.phone}?text=${encodedMsg}`;
+
+      let actionsHtml = "";
+      if (stu.absent) {
+        actionsHtml = `
+          <a class="btn-sms" href="${smsLink}" onclick="recordMessage('${stu.name}', '${stu.phone}', 'SMS')">SMS ਭੇਜੋ ✉️</a>
+          <a class="btn-wa" href="${waLink}" target="_blank" onclick="recordMessage('${stu.name}', '${stu.phone}', 'WhatsApp')">WhatsApp</a>
+        `;
+      } else {
+        actionsHtml = `<span style="color: #a0aec0; font-size: 13px;">ਹਾਜ਼ਰ ਹੈ</span>`;
+      }
+
+      tr.innerHTML = `
+        <td class="checkbox-col">
+          <input type="checkbox" ${stu.absent ? "checked" : ""} onchange="toggleAbsent(${idx})">
+        </td>
+        <td><strong>${stu.name}</strong></td>
+        <td>${stu.phone}</td>
+        <td>${actionsHtml}</td>
+        <td><button class="del-btn" onclick="deleteStudent(${idx})" title="ਹਟਾਓ">×</button></td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  renderTable();
+  renderLogs();
+</script>
+
+</body>
+</html>
