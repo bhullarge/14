@@ -45,7 +45,7 @@
 <!-- ਮੈਸੇਜ ਟੈਂਪਲੇਟ -->
 <div class="card" style="border-left: 4px solid #319795;">
   <h3>✏️ ਮੈਸੇਜ ਟੈਂਪਲੇਟ:</h3>
-  <textarea id="msgTemplate" rows="2"></textarea>
+  <textarea id="msgTemplate" rows="4"></textarea>
   <div class="hint">ਜਿੱਥੇ ਬੱਚੇ ਦਾ ਨਾਮ ਲਿਆਉਣਾ ਹੈ, ਉੱਥੇ <b>{ਨਾਮ}</b> ਰੱਖੋ।</div>
   <button class="btn-save" onclick="saveTemplate()">ਟੈਂਪਲੇਟ ਸੇਵ ਕਰੋ 💾</button>
 </div>
@@ -111,14 +111,15 @@
 </div>
 
 <script>
-  const defaultTemplate = "ਸਤਿਕਾਰਯੋਗ ਮਾਤਾ-ਪਿਤਾ ਜੀ,
+  const defaultTemplate = `ਸਤਿਕਾਰਯੋਗ ਮਾਤਾ-ਪਿਤਾ ਜੀ,
 ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ।
 ਸੂਚਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਕਿ ਤੁਹਾਡਾ ਬੱਚਾ {ਨਾਮ} ਅੱਜ ਸਕੂਲ ਵਿੱਚੋਂ ਗ਼ੈਰ-ਹਾਜ਼ਰ ਹੈ ਅਤੇ ਇਸ ਸਬੰਧੀ ਸਕੂਲ ਨੂੰ ਕੋਈ ਲਿਖਤੀ ਬਿਨੈ-ਪੱਤਰ ਜਾਂ ਸੂਚਨਾ ਪ੍ਰਾਪਤ ਨਹੀਂ ਹੋਈ। ਬੱਚੇ ਦੀ ਪੜ੍ਹਾਈ ਦੇ ਨੁਕਸਾਨ ਤੋਂ ਬਚਣ ਲਈ ਉਸ ਦੀ ਰੋਜ਼ਾਨਾ ਹਾਜ਼ਰੀ ਯਕੀਨੀ ਬਣਾਈ ਜਾਵੇ।
 ਨਾਲ ਹੀ ਇਹ ਵੀ ਸੂਚਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਕਿ ਸਕੂਲ ਦੇ ਨਿਯਮਾਂ ਅਨੁਸਾਰ ਜੇਕਰ ਕੋਈ ਵਿਦਿਆਰਥੀ ਬਿਨਾਂ ਅਗਾਊਂ ਸੂਚਨਾ ਜਾਂ ਅਰਜ਼ੀ ਦੇ ਲਗਾਤਾਰ ਤਿੰਨ ਦਿਨਾਂ ਤੋਂ ਵੱਧ ਗ਼ੈਰ-ਹਾਜ਼ਰ ਰਹਿੰਦਾ ਹੈ, ਤਾਂ ਉਸ ਦਾ ਨਾਮ ਸਕੂਲ ਵਿੱਚੋਂ ਕੱਟ ਦਿੱਤਾ ਜਾਵੇਗਾ। ਜੇਕਰ ਵਿਦਿਆਰਥੀ ਦੀਆਂ ਹਾਜ਼ਰੀਆਂ 75% ਤੋਂ ਘੱਟ ਹੋਈਆਂ ਤਾਂ ਉਸਨੂੰ ਬੋਰਡ ਦਾ ਰੋਲ ਨੰਬਰ ਜਾਰੀ ਨਹੀਂ ਕੀਤਾ ਜਾਵੇਗਾ।
 ਵੱਲੋਂ:
 ਪ੍ਰਿੰਸੀਪਲ,
 ਸਰਕਾਰੀ ਸੀਨੀਅਰ ਸੈਕੰਡਰੀ ਸਕੂਲ(P.S.G),
-ਘੰਡਾਬੰਨਾ।";
+ਘੰਡਾਬੰਨਾ।`;
+
   let currentTemplate = localStorage.getItem("sms_template") || defaultTemplate;
   document.getElementById("msgTemplate").value = currentTemplate;
 
@@ -335,7 +336,6 @@
     document.body.removeChild(link);
   }
 
-  // ਪੇਜ ਲੋਡ ਹੁੰਦੇ ਸਾਰ ਟੇਬਲ ਚਲਾਓ
   renderTable();
   renderLogs();
 </script>
