@@ -28,13 +28,13 @@
   tr:hover { background-color: #f7fafc; }
   .btn-sms { display: inline-block; background-color: #0d6efd; color: white !important; text-decoration: none; padding: 5px 9px; border-radius: 5px; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
   .btn-wa { display: inline-block; background-color: #25d366; color: white !important; text-decoration: none; padding: 5px 9px; border-radius: 5px; font-size: 12px; font-weight: bold; margin-bottom: 4px; margin-left: 4px; }
-  .del-btn { background: none; border: none; color: #e53e3e; font-size: 18px; }
+  .del-btn { background: none; border: none; color: #e53e3e; font-size: 18px; cursor: pointer; }
   .checkbox-col { text-align: center; width: 50px; }
   input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
   .hint { font-size: 12px; color: #718096; margin-top: 4px; }
-  .badge-sent { background-color: #c6f6d5; color: #22543d; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
   .summary-count { font-size: 13px; color: #2b6cb0; font-weight: bold; margin-left: auto; }
   .phone-tag { display: inline-block; background: #e2e8f0; border-radius: 4px; padding: 2px 6px; font-size: 12px; margin: 2px 0; }
+  .action-group { margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -50,7 +50,7 @@
   <button class="btn-save" onclick="saveTemplate()">ਟੈਂਪਲੇਟ ਸੇਵ ਕਰੋ 💾</button>
 </div>
 
-<!-- ਨਵਾਂ ਬੱਚਾ ਜੋੜਨਾ (ਦੋ ਫ਼ੋਨ ਨੰਬਰ) -->
+<!-- ਨਵਾਂ ਬੱਚਾ ਜੋੜਨਾ -->
 <div class="card">
   <h3>➕ ਨਵਾਂ ਵਿਦਿਆਰਥੀ ਜੋੜੋ:</h3>
   <div class="flex-inputs">
@@ -115,8 +115,7 @@
   let currentTemplate = localStorage.getItem("sms_template") || defaultTemplate;
   document.getElementById("msgTemplate").value = currentTemplate;
 
-  // ਇੱਥੇ ਤੁਸੀਂ ਆਪਣੀ ਕਲਾਸ ਦੇ ਸਾਰੇ ਬੱਚਿਆਂ ਦੇ ਨਾਮ ਅਤੇ ਨੰਬਰ ਪੱਕੇ ਤੌਰ 'ਤੇ ਵੀ ਦਰਜ ਕਰ ਸਕਦੇ ਹੋ:
- let defaultStudents = [
+  let defaultStudents = [
     { name: "ਬੇਅੰਤ ਕੌਰ", phone1: "6239884086", phone2: "9779037186", absent: false },
     { name: "ਹੁਸਨਪ੍ਰੀਤ ਕੌਰ", phone1: "", phone2: "", absent: false },
     { name: "ਜਸ਼ਨਪ੍ਰੀਤ ਕੌਰ", phone1: "", phone2: "", absent: false },
@@ -188,17 +187,69 @@
     saveStudents();
   }
 
+  function getMessageText(studentName) {
+    return currentTemplate.replace(/{ਨਾਮ}/g, studentName);
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById("studentTableBody");
+    tbody.innerHTML = "";
+
+    students.forEach((stu, index) => {
+      const tr = document.createElement("tr");
+
+      let phonesHtml = "";
+      if (stu.phone1) phonesHtml += `<span class="phone-tag">📞 ${stu.phone1}</span> `;
+      if (stu.phone2) phonesHtml += `<span class="phone-tag">📞 ${stu.phone2}</span>`;
+      if (!stu.phone1 && !stu.phone2) phonesHtml = "<span style='color:#a0aec0;'>ਕੋਈ ਨੰਬਰ ਨਹੀਂ</span>";
+
+      const encodedMsg = encodeURIComponent(getMessageText(stu.name));
+
+      let actionsHtml = "";
+      if (stu.phone1) {
+        actionsHtml += `
+          <div class="action-group">
+            <span style="font-size:11px;color:#718096;">ਨੰਬਰ 1:</span>
+            <a class="btn-sms" href="sms:${stu.phone1}?body=${encodedMsg}" onclick="recordMessage('${stu.name}', '${stu.phone1}', 'SMS 1')">SMS</a>
+            <a class="btn-wa" href="https://wa.me/91${stu.phone1}?text=${encodedMsg}" target="_blank" onclick="recordMessage('${stu.name}', '${stu.phone1}', 'WhatsApp 1')">WA</a>
+          </div>`;
+      }
+      if (stu.phone2) {
+        actionsHtml += `
+          <div class="action-group">
+            <span style="font-size:11px;color:#718096;">ਨੰਬਰ 2:</span>
+            <a class="btn-sms" href="sms:${stu.phone2}?body=${encodedMsg}" onclick="recordMessage('${stu.name}', '${stu.phone2}', 'SMS 2')">SMS</a>
+            <a class="btn-wa" href="https://wa.me/91${stu.phone2}?text=${encodedMsg}" target="_blank" onclick="recordMessage('${stu.name}', '${stu.phone2}', 'WhatsApp 2')">WA</a>
+          </div>`;
+      }
+
+      tr.innerHTML = `
+        <td class="checkbox-col">
+          <input type="checkbox" ${stu.absent ? "checked" : ""} onchange="toggleAbsent(${index})">
+        </td>
+        <td style="font-weight: bold; ${stu.absent ? 'color: #c53030;' : ''}">${stu.name}</td>
+        <td>${phonesHtml}</td>
+        <td>${actionsHtml || "<span style='color:#a0aec0;'>-</span>"}</td>
+        <td>
+          <button class="del-btn" onclick="deleteStudent(${index})" title="ਹਟਾਓ">✖</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
   function recordMessage(name, phone, medium) {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    const isoDate = `${year}-${month}-${day}`; const displayDate = `${day}/${month}/${year}`;
+    const isoDate = `${year}-${month}-${day}`;
+    const displayDate = `${day}/${month}/${year}`;
     const timeStr = now.toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' });
 
     logs.unshift({
       isoDate: isoDate,
-      displayDate: `${displayDate}${timeStr}`,
+      displayDate: `${displayDate} ${timeStr}`,
       name: name,
       phone: phone,
       medium: medium
@@ -206,6 +257,30 @@
 
     localStorage.setItem("attendance_logs_multi", JSON.stringify(logs));
     renderLogs();
+  }
+
+  function renderLogs() {
+    const tbody = document.getElementById("logTableBody");
+    tbody.innerHTML = "";
+    const list = getFilteredLogs();
+
+    document.getElementById("recordCountText").innerText = `ਕੁੱਲ ਰਿਕਾਰਡ: ${list.length}`;
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#a0aec0; padding:15px;">ਕੋਈ ਰਿਕਾਰਡ ਮੌਜੂਦ ਨਹੀਂ ਹੈ।</td></tr>`;
+      return;
+    }
+
+    list.forEach(item => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${item.displayDate}</td>
+        <td>${item.name}</td>
+        <td>${item.phone}</td>
+        <td><span style="background:#edf2f7; padding:2px 8px; border-radius:4px; font-size:12px;">${item.medium}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
 
   function clearLogs() {
@@ -239,13 +314,23 @@
       return;
     }
     let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    csvContent += "Date & Time,Student Name,Mobile Number,Medium\n";
+    csvContent += "ਮਿਤੀ ਅਤੇ ਸਮਾਂ,ਵਿਦਿਆਰਥੀ ਦਾ ਨਾਮ,ਮੋਬਾਈਲ ਨੰਬਰ,ਮਾਧਿਅਮ\n";
     listToExport.forEach(log => {
-      const dt = log.displayDate || log.date;
-      csvContent += `"${dt}","${log.name}","${log.phone}","${log.medium}"\n`;
+      csvContent += `"${log.displayDate}","${log.name}","${log.phone}","${log.medium}"\n`;
     });
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    const dateTag = selectedFilterDate ? selectedFilterDate : "All_Dates";
-    link.setAttribute("download", `School_Absent_Record
+    const dateTag = selectedFilterDate ? selectedFilterDate : "ਸਾਰੀਆਂ_ਮਿਤੀਆਂ";
+    link.setAttribute("download", `School_Absent_Record_${dateTag}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // ਪੇਜ ਲੋਡ ਹੁੰਦੇ ਸਾਰ ਟੇਬਲ ਚਲਾਓ
+  renderTable();
+  renderLogs();
+</script>
+</body>
+</html>
