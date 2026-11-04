@@ -116,10 +116,31 @@
   document.getElementById("msgTemplate").value = currentTemplate;
 
   // ਇੱਥੇ ਤੁਸੀਂ ਆਪਣੀ ਕਲਾਸ ਦੇ ਸਾਰੇ ਬੱਚਿਆਂ ਦੇ ਨਾਮ ਅਤੇ ਨੰਬਰ ਪੱਕੇ ਤੌਰ 'ਤੇ ਵੀ ਦਰਜ ਕਰ ਸਕਦੇ ਹੋ:
-  let defaultStudents = [
-    { name: "ਹਰਦੀਪ ਸਿੰਘ", phone1: "9815032630", phone2: "9876501234", absent: true },
-    { name: "ਸਿਮਰਨਜੀਤ ਕੌਰ", phone1: "9876543210", phone2: "", absent: false },
-    { name: "ਗੁਰਪ੍ਰੀਤ ਸਿੰਘ", phone1: "9876598765", phone2: "", absent: false }
+ let defaultStudents = [
+    { name: "ਬੇਅੰਤ ਕੌਰ", phone1: "6239884086", phone2: "9779037186", absent: false },
+    { name: "ਹੁਸਨਪ੍ਰੀਤ ਕੌਰ", phone1: "", phone2: "", absent: false },
+    { name: "ਜਸ਼ਨਪ੍ਰੀਤ ਕੌਰ", phone1: "", phone2: "", absent: false },
+    { name: "ਜਸ਼ਨਪ੍ਰੀਤ ਕੌਰ", phone1: "9463131904", phone2: "7009625642", absent: false },
+    { name: "ਜਸਪ੍ਰੀਤ ਕੌਰ", phone1: "8528834854", phone2: "", absent: false },
+    { name: "ਕੀਰਤ ਕੌਰ", phone1: "9877219781", phone2: "", absent: false },
+    { name: "ਕੋਮਲਪ੍ਰੀਤ ਕੌਰ", phone1: "9878098828", phone2: "", absent: false },
+    { name: "ਖੁਸ਼ਦੀਪ ਕੌਰ", phone1: "7508176340", phone2: "", absent: false },
+    { name: "ਮਨਪ੍ਰੀਤ ਕੌਰ", phone1: "8837707563", phone2: "7526915025", absent: false },
+    { name: "ਮਹਿਕਦੀਪ ਕੌਰ", phone1: "9876743410", phone2: "", absent: false },
+    { name: "ਮਹਿਕਪ੍ਰੀਤ ਕੌਰ", phone1: "9872166467", phone2: "7696561645", absent: false },
+    { name: "ਨਵਜੋਤ ਕੌਰ", phone1: "9815073483", phone2: "9464059442", absent: false },
+    { name: "ਸ਼ਹਿਨਾਜ਼", phone1: "7528890734", phone2: "9872803734", absent: false },
+    { name: "ਸਿਮਰਨਪ੍ਰੀਤ ਕੌਰ", phone1: "8968058285", phone2: "", absent: false },
+    { name: "ਬਲਕਰਨ ਸਿੰਘ", phone1: "9876619841", phone2: "", absent: false },
+    { name: "ਦੀਦਾਰ ਸਿੰਘ", phone1: "9779623199", phone2: "8968674008", absent: false },
+    { name: "ਗੁਰਨੂਰ ਸਿੰਘ", phone1: "9872848992", phone2: "", absent: false },
+    { name: "ਹਰਜਿੰਦਰ ਸਿੰਘ", phone1: "8146174147", phone2: "", absent: false },
+    { name: "ਜਸ਼ਨਪ੍ਰੀਤ ਸਿੰਘ", phone1: "8196820130", phone2: "8146771130", absent: false },
+    { name: "ਮਨਿੰਦਰ ਸਿੰਘ", phone1: "7652832646", phone2: "9501141760", absent: false },
+    { name: "ਸਮਰ ਸਿੰਘ", phone1: "7355519490", phone2: "8427876603", absent: false },
+    { name: "ਸੁਖਰਾਜ ਸਿੰਘ", phone1: "6280045940", phone2: "9914944195", absent: false },
+    { name: "ਯੁਵਰਾਜ ਸਿੰਘ", phone1: "9814352498", phone2: "9878313880", absent: false },
+    { name: "ਕੁਲਵਿੰਦਰ ਸਿੰਘ", phone1: "8427569920", phone2: "", absent: false }
   ];
 
   let students = JSON.parse(localStorage.getItem("school_students_multi")) || defaultStudents;
